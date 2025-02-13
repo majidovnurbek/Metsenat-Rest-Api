@@ -34,6 +34,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 class OTM(models.Model):
     otm_name = models.CharField(_('OTM name'), max_length=150)
 
+    def __str__(self) -> str:
+        return self.otm_name
+
 class Student(models.Model):
     student_choices=[
         ('bakalavr', 'Bakalavr'),
@@ -47,15 +50,23 @@ class Student(models.Model):
     student_type=models.CharField(choices=student_choices, default='bakalavr', max_length=150)
     amount_contract = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def __str__(self) -> str:
+        return self.full_name
+
 class Sponsor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     student_full_name=models.ForeignKey(Student,on_delete=models.CASCADE)
     amount_sponsor=models.DecimalField(decimal_places=2, max_digits=10)
     created_date = models.DateField(auto_now_add=True)
 
+    def __str__(self) -> str:
+        return self.student_full_name.full_name
 
 
-class StudentSponsor(models.Model):
-    student= models.ForeignKey(Student, on_delete=models.CASCADE)
-    sponsor=models.ForeignKey(Sponsor, on_delete=models.CASCADE)
-    
+#
+# class StudentSponsor(models.Model):
+#     student= models.ForeignKey(Student, on_delete=models.CASCADE)
+#     sponsor=models.OneToOneField(Sponsor, on_delete=models.CASCADE)
+#
+#     def __str__(self) -> str:
+#         return self.student

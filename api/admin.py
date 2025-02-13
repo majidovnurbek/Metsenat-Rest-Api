@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import User,OTM,Student,Sponsor,StudentSponsor
+from api.models import User,OTM,Student,Sponsor
 
 admin.site.register(User)
 admin.site.register(OTM)
