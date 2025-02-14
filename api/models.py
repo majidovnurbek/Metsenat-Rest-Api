@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from api.managers import UserManager
+from django.core.exceptions import ValidationError
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -16,8 +17,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, blank=True)
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True, blank=True)
     avatar = models.ImageField(upload_to="avatar/student", default="../media/avatar/student/default-student.webp")
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)  # REQUIRED for admin access
+    is_superuser = models.BooleanField(default=False)  # REQUIRED for superusers
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -46,7 +47,7 @@ class Student(models.Model):
 
     full_name = models.CharField(max_length=100)
     degree = models.CharField(max_length=50, choices=StudentTypes.choices)
-    contract_price = models.FloatField(default=0)
+    contract_price = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     university = models.ForeignKey("api.University", on_delete=models.CASCADE, related_name="students")
 
@@ -54,9 +55,8 @@ class Student(models.Model):
         return self.full_name
 
     class Meta:
-        verbose_name = 'student'
-        verbose_name_plural = 'students'
-
+        verbose_name ='student'
+        verbose_name_plural ='students'
 
 class Sponsor(models.Model):
     class StatusChoices(models.TextChoices):
@@ -66,25 +66,34 @@ class Sponsor(models.Model):
         CANCELLED = 'cancelled', 'Cancelled'
 
     class SponsorStatus(models.TextChoices):
-        JURIDICAL = 'yuridik', 'Yuridik shaxs'
-        INDIVIDUAL = 'jismoniy', 'Jismoniy shaxs'
+        JURIDICAL = 'YURIDIK SHAXS', 'Yuridik shaxs'
+        INDIVIDUAL = 'JISMONIY SHAXS', 'Jismoniy shaxs'
 
-    sponsor_full_name = models.CharField(max_length=250)
-    student_sponsor = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="sponsors")
+    full_name = models.CharField(max_length=250)
     phone = models.CharField(max_length=30)
     amount = models.PositiveBigIntegerField()
+    is_organization = models.BooleanField()
     progress = models.CharField(max_length=30, choices=StatusChoices.choices)
-    sponsor_status = models.CharField(max_length=50, choices=SponsorStatus.choices)
+    sponsor_status = models.CharField(max_length=50, choices=SponsorStatus.choices, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     organization_name = models.CharField(max_length=250, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if self.sponsor_status == self.SponsorStatus.INDIVIDUAL:
-            self.organization_name = None  # Jismoniy shaxs bo'lsa, tashkilot nomini o'chiramiz
+        self.sponsor_status = self.SponsorStatus.JURIDICAL if self.is_organization else self.SponsorStatus.INDIVIDUAL
+        if not self.is_organization:
+            self.organization_name = None
+
         super().save(*args, **kwargs)
 
+    def clean(self):
+        """Form yoki admin panel orqali validatsiya qo'shish."""
+        if self.is_organization and not self.organization_name:
+            raise ValidationError({'organization_name': "Yuridik shaxs uchun tashkilot nomi majburiy!"})
+        if not self.is_organization and self.organization_name:
+            raise ValidationError({'organization_name': "Jismoniy shaxs uchun tashkilot nomi kiritilmasligi kerak!"})
+
     def __str__(self):
-        return f"{self.full_name} ({self.organization_name if self.organization_name else 'Jismoniy shaxs'}) - {self.amount} UZS"
+        return f"{self.full_name} - {self.sponsor_status} - {self.amount}"
 
     class Meta:
         verbose_name = 'sponsor'
@@ -98,8 +107,11 @@ class StudentSponsor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.student} - {self.sponsor} - {self.amount} UZS"
+        return self.student, self.sponsor, self.amount, self.created_at
 
     class Meta:
-        verbose_name = 'student sponsor'
-        verbose_name_plural = 'student sponsors'
+        verbose_name ='student sponsor'
+        verbose_name_plural ='student sponsors'
+
+# Login Register
+
