@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'drf_spectacular',
+    'django_filters',
+    'drf_spectacular_sidecar',
 
 ]
 
