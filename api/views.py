@@ -1,5 +1,5 @@
-from api.models import User
-from api.serializers import RegisterSerializer,LoginSerializer
+from api.models import User,University
+from api.serializers import RegisterSerializer,LoginSerializer,UniversitySerializer
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.response import Response
@@ -52,3 +52,11 @@ class LoginAPIView(APIView):
             else:
                 return Response({'detail': 'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UniversityAPIView(APIView):
+    def get(self, request):
+        universities = University.objects.all()
+        serializer = UniversitySerializer(universities, many=True)
+        return Response(serializer.data)
+
+        
