@@ -8,7 +8,7 @@ from django.conf import settings
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email','password','role']
+        fields = ['username','email','password','role']
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()

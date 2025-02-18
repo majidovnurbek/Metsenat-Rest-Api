@@ -1,5 +1,5 @@
-from api.models import User,University
-from api.serializers import RegisterSerializer,LoginSerializer,UniversitySerializer
+from api.models import User,University,StudentSponsor
+from api.serializers import RegisterSerializer,LoginSerializer,UniversitySerializer,StudentSponsorSerializer
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.response import Response
@@ -59,4 +59,9 @@ class UniversityAPIView(APIView):
         serializer = UniversitySerializer(universities, many=True)
         return Response(serializer.data)
 
-        
+
+class StudentSponsorAPIView(APIView):
+    def get(self, request):
+        sponsors = StudentSponsor.objects.all()
+        serializer = StudentSponsorSerializer(sponsors, many=True)
+        return Response(serializer.data)

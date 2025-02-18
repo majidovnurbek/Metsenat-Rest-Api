@@ -106,11 +106,10 @@ class StudentSponsor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.student, self.sponsor, self.amount, self.created_at
+        return str(self.student)
 
     class Meta:
         verbose_name ='student sponsor'
         verbose_name_plural ='student sponsors'
 
-# Login Register
 
