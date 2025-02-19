@@ -45,6 +45,7 @@ class Student(models.Model):
         MASTER = "master"
 
     full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=30,unique=True)
     degree = models.CharField(max_length=50, choices=StudentTypes.choices)
     contract_price = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

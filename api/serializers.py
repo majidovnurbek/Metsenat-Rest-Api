@@ -1,7 +1,7 @@
 from warnings import filters
 from rest_framework import serializers
 from rest_framework.generics import ListAPIView
-from .models import User,Student,University,Sponsor,StudentSponsor
+from .models import User,Student,Sponsor,StudentSponsor
 from django.conf import settings
 
 
@@ -29,7 +29,8 @@ class SponsorSerializer(serializers.ModelSerializer):
         model = Sponsor
         fields = ['full_name','phone','progress','organization_name','sponsor_status']
 
-class UniversitySerializer(serializers.ModelSerializer):
+class AddStudentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = University
-        fields = ['id','name']
+        model = Student
+        fields = ['full_name','phone_number','degree','contract_price','university']
+        

@@ -1,5 +1,5 @@
-from api.models import User,University,StudentSponsor
-from api.serializers import RegisterSerializer,LoginSerializer,UniversitySerializer,StudentSponsorSerializer
+from api.models import User,StudentSponsor,Student,Sponsor
+from api.serializers import RegisterSerializer,LoginSerializer,StudentSponsorSerializer,StudentSerializer,SponsorSerializer,AddStudentSerializer
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.response import Response
@@ -15,8 +15,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
-
 class RegisterAPIView(APIView):
+    @extend_schema(
+        summary='User register',
+        request=RegisterSerializer,
+        responses={
+            200: OpenApiParameter(name="Token",description='Get token'),
+            400: OpenApiParameter(name="errors",description='Get token'),
+        },
+        tags=['register autication'],
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -37,6 +45,16 @@ class RegisterAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginAPIView(APIView):
+    @extend_schema(
+        summary='User login',
+        description='Login useing email,username and password',
+        request=LoginSerializer,
+        responses={
+            200: OpenApiParameter(name="Token",description='Get token'),
+            400: OpenApiParameter(name="errors",description='Get token'),
+        },
+        tags=['Login autication'],
+    )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -53,11 +71,6 @@ class LoginAPIView(APIView):
                 return Response({'detail': 'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UniversityAPIView(APIView):
-    def get(self, request):
-        universities = University.objects.all()
-        serializer = UniversitySerializer(universities, many=True)
-        return Response(serializer.data)
 
 
 class StudentSponsorAPIView(APIView):
@@ -65,3 +78,32 @@ class StudentSponsorAPIView(APIView):
         sponsors = StudentSponsor.objects.all()
         serializer = StudentSponsorSerializer(sponsors, many=True)
         return Response(serializer.data)
+
+class StudentAPIView(APIView):
+    def get(self, request):
+        student = Student.objects.all()
+        serializer = StudentSerializer(student, many=True)
+        return Response(serializer.data)
+
+class SponsorAPIView(APIView):
+    def get(self, request):
+        sponsors = Sponsor.objects.all()
+        serializer = SponsorSerializer(sponsors, many=True)
+        return Response(serializer.data)
+
+class AddStudentAPIView(APIView):
+    @extend_schema(
+        summary='add student',
+        description='add student',
+        request=AddStudentSerializer,
+        responses={
+            200: OpenApiParameter(name="Token", description='Get token'),
+            400: OpenApiParameter(name="errors", description='Get token'),
+        },
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = AddStudentSerializer(data=request.data)
+        if serializer.is_valid():
+            student = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
