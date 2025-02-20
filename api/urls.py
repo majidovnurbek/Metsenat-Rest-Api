@@ -7,5 +7,5 @@ urlpatterns = [
     path('student-sponsor/', StudentSponsorAPIView.as_view(),name='studentsponsor'),
     path('student/', StudentAPIView.as_view(),name='student'),
     path('sponsor/', SponsorAPIView.as_view(),name='sponsor'),
-    path('add-student', AddStudentAPIView.as_view(),name='addstudent'),
+    path('student/add/', AddStudentAPIView.as_view(),name='addstudent'),
 ]

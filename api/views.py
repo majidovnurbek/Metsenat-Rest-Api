@@ -16,6 +16,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class RegisterAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     @extend_schema(
         summary='User register',
         request=RegisterSerializer,
@@ -45,6 +46,7 @@ class RegisterAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     @extend_schema(
         summary='User login',
         description='Login useing email,username and password',
@@ -74,24 +76,28 @@ class LoginAPIView(APIView):
 
 
 class StudentSponsorAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request):
         sponsors = StudentSponsor.objects.all()
         serializer = StudentSponsorSerializer(sponsors, many=True)
         return Response(serializer.data)
 
 class StudentAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request):
         student = Student.objects.all()
         serializer = StudentSerializer(student, many=True)
         return Response(serializer.data)
 
 class SponsorAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request):
         sponsors = Sponsor.objects.all()
         serializer = SponsorSerializer(sponsors, many=True)
         return Response(serializer.data)
 
 class AddStudentAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     @extend_schema(
         summary='add student',
         description='add student',
