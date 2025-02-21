@@ -48,7 +48,7 @@ class Student(models.Model):
     phone_number = models.CharField(max_length=30,unique=True)
     degree = models.CharField(max_length=50, choices=StudentTypes.choices)
     contract_price = models.PositiveBigIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
     university = models.ForeignKey("api.University", on_delete=models.CASCADE, related_name="students")
 
     def __str__(self):
@@ -75,7 +75,7 @@ class Sponsor(models.Model):
     is_organization = models.BooleanField()
     progress = models.CharField(max_length=30, choices=StatusChoices.choices)
     sponsor_status = models.CharField(max_length=50, choices=SponsorStatus.choices, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
     organization_name = models.CharField(max_length=250, blank=True, null=True)
 
     def save(self, *args, **kwargs):
@@ -103,8 +103,7 @@ class Sponsor(models.Model):
 class StudentSponsor(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     sponsor = models.ForeignKey(Sponsor, on_delete=models.CASCADE)
-    amount = models.PositiveBigIntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return str(self.student)

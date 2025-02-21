@@ -8,4 +8,5 @@ urlpatterns = [
     path('student/', StudentAPIView.as_view(),name='student'),
     path('sponsor/', SponsorAPIView.as_view(),name='sponsor'),
     path('student/add/', AddStudentAPIView.as_view(),name='addstudent'),
+
 ]

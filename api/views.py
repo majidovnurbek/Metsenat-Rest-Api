@@ -77,34 +77,59 @@ class LoginAPIView(APIView):
 
 class StudentSponsorAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    def get(self, request):
+
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                sponsor = StudentSponsor.objects.get(pk=pk)
+                serializer = StudentSponsorSerializer(sponsor)
+                return Response(serializer.data)
+            except StudentSponsor.DoesNotExist:
+                return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         sponsors = StudentSponsor.objects.all()
         serializer = StudentSponsorSerializer(sponsors, many=True)
         return Response(serializer.data)
 
 class StudentAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    def get(self, request):
-        student = Student.objects.all()
-        serializer = StudentSerializer(student, many=True)
+
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                student = Student.objects.get(pk=pk)
+                serializer = StudentSerializer(student)
+                return Response(serializer.data)
+            except Student.DoesNotExist:
+                return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        students = Student.objects.all()
+        serializer = StudentSerializer(students, many=True)
         return Response(serializer.data)
 
 class SponsorAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
-    def get(self, request):
+
+    def get(self, request, pk=None):
+        if pk:
+            try:
+                sponsor = Sponsor.objects.get(pk=pk)
+                serializer = SponsorSerializer(sponsor)
+                return Response(serializer.data)
+            except Sponsor.DoesNotExist:
+                return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         sponsors = Sponsor.objects.all()
         serializer = SponsorSerializer(sponsors, many=True)
         return Response(serializer.data)
 
 class AddStudentAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+
     @extend_schema(
-        summary='add student',
-        description='add student',
+        summary="Add student",
+        description="Add a new student",
         request=AddStudentSerializer,
         responses={
-            200: OpenApiParameter(name="Token", description='Get token'),
-            400: OpenApiParameter(name="errors", description='Get token'),
+            201: OpenApiParameter(name="Token", description="Get token"),
+            400: OpenApiParameter(name="errors", description="Validation errors"),
         },
     )
     def post(self, request, *args, **kwargs):
