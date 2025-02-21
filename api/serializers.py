@@ -43,5 +43,13 @@ class AddStudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['full_name','phone_number','degree','contract_price','university']
 
+class SponsorUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sponsor
+        fields = ['full_name','phone','progress','organization_name','sponsor_status']
 
-        
+class StudentaUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ['full_name','phone_number','degree','contract_price','university']
+
