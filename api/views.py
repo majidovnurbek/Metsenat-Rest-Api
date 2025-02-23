@@ -1,5 +1,5 @@
-from api.models import User,StudentSponsor,Student,Sponsor
-from api.serializers import RegisterSerializer,LoginSerializer,StudentSponsorSerializer,StudentSerializer,SponsorSerializer,AddStudentSerializer
+from api.models import User,StudentSponsor,Student,Sponsor,PaymentSummary
+from api.serializers import RegisterSerializer,LoginSerializer,StudentSponsorSerializer,StudentSerializer,SponsorSerializer,AddStudentSerializer,PaymentSummarySerializer
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.response import Response
@@ -138,3 +138,20 @@ class AddStudentAPIView(APIView):
             student = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PaymentSummaryAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    @extend_schema(
+        summary='Payment summary',
+        request=PaymentSummarySerializer,
+        responses={
+            200: OpenApiParameter(name="Token", description='Get token'),
+            400: OpenApiParameter(name="errors", description='Error message'),
+        }
+    )
+    def get(self, request):
+        payments = PaymentSummary.objects.all()
+        serializer = PaymentSummarySerializer(payments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

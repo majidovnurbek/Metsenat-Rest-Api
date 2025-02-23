@@ -1,8 +1,10 @@
 from warnings import filters
 from rest_framework import serializers
 from rest_framework.generics import ListAPIView
-from .models import User,Student,Sponsor,StudentSponsor
+from .models import User,Student,Sponsor,StudentSponsor,PaymentSummary
 from django.conf import settings
+from django.db import models
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -43,6 +45,27 @@ class AddStudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['full_name','phone_number','degree','contract_price','university']
 
+
+class PaymentSummarySerializer(serializers.ModelSerializer):
+    total_paid = serializers.SerializerMethodField()
+    total_requested = serializers.SerializerMethodField()
+    total_needed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PaymentSummary
+        fields = ['total_paid', 'total_requested', 'total_needed', 'created_at']
+
+    def get_total_paid(self, obj):
+        return Sponsor.objects.aggregate(total_paid=models.Sum('amount'))['total_paid'] or 0
+
+    def get_total_requested(self, obj):
+        return Student.objects.aggregate(total_requested=models.Sum('contract_price'))['total_requested'] or 0
+
+    def get_total_needed(self, obj):
+        total_requested = self.get_total_requested(obj)
+        total_paid = self.get_total_paid(obj)
+        return total_requested - total_paid
+
 class SponsorUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sponsor
@@ -52,4 +75,3 @@ class StudentaUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ['full_name','phone_number','degree','contract_price','university']
-
