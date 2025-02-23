@@ -1,5 +1,6 @@
 from api.models import User,StudentSponsor,Student,Sponsor,PaymentSummary
 from api.serializers import RegisterSerializer,LoginSerializer,StudentSponsorSerializer,StudentSerializer,SponsorSerializer,AddStudentSerializer,PaymentSummarySerializer,SponsorUpdateSerializer,StudentaUpdateSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.response import Response
@@ -17,7 +18,7 @@ from yaml import serialize
 
 
 class RegisterAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
     @extend_schema(
         summary='User register',
         request=RegisterSerializer,
@@ -47,7 +48,7 @@ class RegisterAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
     @extend_schema(
         summary='User login',
         description='Login useing email,username and password',
@@ -75,7 +76,7 @@ class LoginAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class StudentSponsorAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
 
     def get(self, request, pk=None):
         if pk:
@@ -90,7 +91,7 @@ class StudentSponsorAPIView(APIView):
         return Response(serializer.data)
 
 class StudentAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
 
     def get(self, request, pk=None):
         if pk:
@@ -105,7 +106,7 @@ class StudentAPIView(APIView):
         return Response(serializer.data)
 
 class SponsorAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
 
     def get(self, request, pk=None):
         if pk:
@@ -120,7 +121,7 @@ class SponsorAPIView(APIView):
         return Response(serializer.data)
 
 class AddStudentAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
 
     @extend_schema(
         summary="Add student",
@@ -139,7 +140,7 @@ class AddStudentAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PaymentSummaryAPIView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
 
     @extend_schema(
         summary='Payment summary',
@@ -192,3 +193,17 @@ class StudentUpdateAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SponsorFilterView(ListAPIView):
+    serializer_class = SponsorSerializer
+    queryset = Sponsor.objects.all()
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter]
+    search_fields = ['full_name','progress','sponsor_status']
+    filterset_fields = ['full_name','progress','sponsor_status']
+
+class StudentFilterView(ListAPIView):
+    serializer_class = StudentSerializer
+    queryset = Student.objects.all()
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter]
+    filterset_fields = ['full_name','degree','university']
+    search_fields = ['full_name','degree','university']
