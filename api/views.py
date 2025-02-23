@@ -175,6 +175,15 @@ class SponsorUpdateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk=None):
+        try:
+            sponsor = Sponsor.objects.get(pk=pk)
+        except Sponsor.DoesNotExist:
+            return Response({"error": "Sponsor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        sponsor.delete()
+        return Response({"message": "Sponsor successfully deleted"}, status=status.HTTP_204_NO_CONTENT)
+
 class StudentUpdateAPIView(APIView):
     parser_classes = (JSONParser,MultiPartParser, FormParser)
     @extend_schema(
@@ -207,3 +216,10 @@ class StudentFilterView(ListAPIView):
     filter_backends = [DjangoFilterBackend,filters.SearchFilter]
     filterset_fields = ['full_name','degree','university']
     search_fields = ['full_name','degree','university']
+
+class StudentSponsorFilterView(ListAPIView):
+    serializer_class = StudentSponsorSerializer
+    queryset = StudentSponsor.objects.all()
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter]
+    filterset_fields = ['student','sponsor','created_at']
+    search_fields = ['student','sponsor','created_at']

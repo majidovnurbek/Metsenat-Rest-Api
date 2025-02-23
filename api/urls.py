@@ -1,7 +1,7 @@
 from django.urls import path
 from api.views import RegisterAPIView, LoginAPIView, StudentSponsorAPIView, StudentAPIView, SponsorAPIView, \
     AddStudentAPIView, PaymentSummaryAPIView, SponsorUpdateAPIView, StudentUpdateAPIView, SponsorFilterView, \
-    StudentFilterView
+    StudentFilterView, StudentSponsorFilterView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view(),name='register'),
@@ -18,5 +18,6 @@ urlpatterns = [
     path('student/update/<int:pk>/', StudentUpdateAPIView.as_view(),name='studentupdatedetail'),
     path('sponsor/filter/', SponsorFilterView.as_view(),name='sponsorfilter'),
     path('student/filter/', StudentFilterView.as_view(),name='studentfilter'),
+    path('student-sponsor/filter/', StudentSponsorFilterView.as_view(),name='studentsponsorfilter'),
 
 ]
