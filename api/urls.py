@@ -19,5 +19,4 @@ urlpatterns = [
     path('sponsor/filter/', SponsorFilterView.as_view(),name='sponsorfilter'),
     path('student/filter/', StudentFilterView.as_view(),name='studentfilter'),
     path('student-sponsor/filter/', StudentSponsorFilterView.as_view(),name='studentsponsorfilter'),
-
 ]

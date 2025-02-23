@@ -203,6 +203,14 @@ class StudentUpdateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk=None):
+        try:
+            student = Student.objects.get(pk=pk)
+        except Student.DoesNotExist:
+            return Response({"error": "Student not found"}, status=status.HTTP_404_NOT_FOUND)
+        student.delete()
+        return Response({"message": "Student successfully deleted"}, status=status.HTTP_200_OK)
+
 class SponsorFilterView(ListAPIView):
     serializer_class = SponsorSerializer
     queryset = Sponsor.objects.all()
