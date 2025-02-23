@@ -1,5 +1,5 @@
 from api.models import User,StudentSponsor,Student,Sponsor,PaymentSummary
-from api.serializers import RegisterSerializer,LoginSerializer,StudentSponsorSerializer,StudentSerializer,SponsorSerializer,AddStudentSerializer,PaymentSummarySerializer
+from api.serializers import RegisterSerializer,LoginSerializer,StudentSponsorSerializer,StudentSerializer,SponsorSerializer,AddStudentSerializer,PaymentSummarySerializer,SponsorUpdateSerializer,StudentaUpdateSerializer
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.response import Response
@@ -12,7 +12,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema,OpenApiParameter
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from yaml import serialize
 
 
 class RegisterAPIView(APIView):
@@ -72,8 +73,6 @@ class LoginAPIView(APIView):
             else:
                 return Response({'detail': 'Invalid email or password'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 class StudentSponsorAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -139,7 +138,6 @@ class AddStudentAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class PaymentSummaryAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -155,3 +153,42 @@ class PaymentSummaryAPIView(APIView):
         payments = PaymentSummary.objects.all()
         serializer = PaymentSummarySerializer(payments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SponsorUpdateAPIView(APIView):
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
+
+    @extend_schema(
+        summary='Sponsor update',
+        request=SponsorUpdateSerializer,
+        responses={
+            200: OpenApiParameter(name="Token", description='Get token'),
+            400: OpenApiParameter(name="errors", description='Error message'),
+        },
+        tags=['Sponsor update'],
+    )
+    def put(self, request, pk=None):
+        sponsor = Sponsor.objects.get(pk=pk)
+        serializer = SponsorUpdateSerializer(sponsor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StudentUpdateAPIView(APIView):
+    parser_classes = (JSONParser,MultiPartParser, FormParser)
+    @extend_schema(
+        summary='Student update',
+        request=StudentaUpdateSerializer,
+        responses={
+            200: OpenApiParameter(name="Token", description='Get token'),
+            400: OpenApiParameter(name="errors", description='Error message'),
+        },
+        tags=['Student update'],
+    )
+    def put(self, request, pk=None):
+        student = Student.objects.get(pk=pk)
+        serializer=StudentaUpdateSerializer(student, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

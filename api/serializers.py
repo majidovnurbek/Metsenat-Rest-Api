@@ -29,10 +29,10 @@ class StudentSponsorSerializer(serializers.ModelSerializer):
         model = StudentSponsor
         fields = ['student', 'sponsor', 'contract_amount', 'amount_spent', 'created_at']
 
-    def get_contract_amount(self, obj):
+    def get_amount_spent(self, obj):
         return obj.sponsor.amount if obj.sponsor else None
 
-    def get_amount_spent(self, obj):
+    def get_contract_amount(self, obj):
         return obj.student.contract_price if obj.student else None
 
 class SponsorSerializer(serializers.ModelSerializer):
@@ -44,7 +44,6 @@ class AddStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ['full_name','phone_number','degree','contract_price','university']
-
 
 class PaymentSummarySerializer(serializers.ModelSerializer):
     total_paid = serializers.SerializerMethodField()
@@ -69,9 +68,10 @@ class PaymentSummarySerializer(serializers.ModelSerializer):
 class SponsorUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sponsor
-        fields = ['full_name','phone','progress','organization_name','sponsor_status']
+        fields = ['full_name','phone','amount','progress','organization_name','sponsor_status']
 
 class StudentaUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ['full_name','phone_number','degree','contract_price','university']
+
