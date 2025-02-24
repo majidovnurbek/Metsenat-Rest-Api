@@ -22,18 +22,15 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ['full_name','degree','contract_price','university']
 
 class StudentSponsorSerializer(serializers.ModelSerializer):
-    contract_amount = serializers.SerializerMethodField()
-    amount_spent = serializers.SerializerMethodField()
+    full_name = serializers.CharField(source="student.full_name", read_only=True)
+    degree = serializers.CharField(source="student.degree", read_only=True)
+    university = serializers.CharField(source="student.university.name", read_only=True)
+    contract_amount = serializers.IntegerField(source="student.contract_price", read_only=True)
+    amount_spent = serializers.IntegerField(source="sponsor.amount", read_only=True)
 
     class Meta:
         model = StudentSponsor
-        fields = ['student', 'sponsor', 'contract_amount', 'amount_spent', 'created_at']
-
-    def get_amount_spent(self, obj):
-        return obj.sponsor.amount if obj.sponsor else None
-
-    def get_contract_amount(self, obj):
-        return obj.student.contract_price if obj.student else None
+        fields = ['full_name', 'degree', 'university', 'contract_amount', 'amount_spent', 'created_at']
 
 class SponsorSerializer(serializers.ModelSerializer):
     class Meta:
