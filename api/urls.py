@@ -1,7 +1,18 @@
 from django.urls import path
-from api.views import RegisterAPIView, LoginAPIView, StudentSponsorAPIView, StudentAPIView, SponsorAPIView, \
-    AddStudentAPIView, PaymentSummaryAPIView, SponsorUpdateAPIView, StudentUpdateAPIView, SponsorFilterView, \
-    StudentFilterView, StudentSponsorFilterView
+from api.views import (
+    RegisterAPIView,
+    LoginAPIView,
+    StudentSponsorAPIView,
+    StudentAPIView,
+    SponsorAPIView,
+    AddStudentAPIView,
+    PaymentSummaryAPIView,
+    SponsorUpdateAPIView,
+    StudentUpdateAPIView,
+    SponsorFilterView,
+    StudentFilterView,
+    StudentSponsorFilterView
+)
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view(),name='register'),

@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from api.models import User,University,Student,Sponsor,StudentSponsor,PaymentSummary
+from api.models import (
+    User,
+    University,
+    Student,
+    Sponsor,
+    StudentSponsor,
+    PaymentSummary
+)
 
 admin.site.register(User)
 admin.site.register(University)
