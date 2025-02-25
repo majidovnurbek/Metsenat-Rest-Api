@@ -16,6 +16,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, null=True, blank=True)
+    avatar = models.ImageField(upload_to="avatar/student", default="avatar/student/download.png")
+
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     objects = UserManager()
