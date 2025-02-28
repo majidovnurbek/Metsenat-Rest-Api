@@ -35,7 +35,7 @@ class StudentSponsorSerializer(serializers.ModelSerializer):
 class SponsorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sponsor
-        fields = ['full_name','phone','progress','organization_name','sponsor_status']
+        fields = ['full_name','phone','amount','is_organization','progress','organization_name']
 
 class AddStudentSerializer(serializers.ModelSerializer):
     class Meta:

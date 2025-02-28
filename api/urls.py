@@ -11,7 +11,8 @@ from api.views import (
     StudentUpdateAPIView,
     SponsorFilterView,
     StudentFilterView,
-    StudentSponsorFilterView
+    StudentSponsorFilterView,
+    AddSponsorApiView
 )
 
 urlpatterns = [
@@ -30,4 +31,5 @@ urlpatterns = [
     path('sponsor/filter/', SponsorFilterView.as_view(),name='sponsorfilter'),
     path('student/filter/', StudentFilterView.as_view(),name='studentfilter'),
     path('student-sponsor/filter/', StudentSponsorFilterView.as_view(),name='studentsponsorfilter'),
+    path('sponsor/add/', AddSponsorApiView.as_view(),name='addsponsor'),
 ]
