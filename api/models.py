@@ -78,7 +78,7 @@ class Sponsor(models.Model):
     progress = models.CharField(max_length=30, choices=StatusChoices.choices)
     sponsor_status = models.CharField(max_length=50, choices=SponsorStatus.choices, editable=False)
     created_at = models.DateField(auto_now_add=True)
-    organization_name = models.CharField(max_length=250, blank=True, null=True)
+    organization_name = models.CharField(max_length=250)
 
     def save(self, *args, **kwargs):
         self.sponsor_status = self.SponsorStatus.JURIDICAL if self.is_organization else self.SponsorStatus.INDIVIDUAL
